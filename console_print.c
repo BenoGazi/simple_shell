@@ -7,5 +7,5 @@
 
 void printConsole(char *output)
 {
-	write(STDOUT_FILENO, output, strlen(output));
+	write(STDOUT_FILENO, output, _strlen(output));
 }
