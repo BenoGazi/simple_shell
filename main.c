@@ -2,76 +2,54 @@
 
 /**
  * main - main function
- * @argc: Argument Count
- * @argv: Argument Vector
- * Return: Success
- */
-
-int main(__attribute__((unused))int argc, char *argv[])
-{
-	char input[ARG_COUNT];
-	char *output;
-	size_t output_len;
-
-	if (argc > 1)
-	{
-		handle_args(argc, argv);
-		return (0);
-	}
-	do {
-		printConsole("$");
-		_input(input, sizeof(input));
-		_output(&output, &output_len);
-		printConsole(input);
-		printConsole("\n");
-		free(output);
-	} while (true);
-	return (0);
-}
-
-/**
- * handle_args - main function
- * @argc: count
+ * @argc: argument count
  * @argv: vector
+ * Return: Always 0;
  */
 
-void handle_args(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-	char buffer[ARG_COUNT], idx[10];
-	const char *sep = " ";
-	const char *header = "";
+	char *lpoint = NULL, **input = NULL;
+	size_t i = 0, i_count = 0;
+	ssize_t i_read;
+	pid_t child;
+	int stat;
 
-	size_t idx_len = 0;
-	size_t j = 0;
-	int temp = 1;
-	int i = 0;
-	(void)argv;
-
-	while (i < argc)
+	while (true)
 	{
-		i++;
-		header = " ";
-		temp = 1;
-		sep = " ";
-		while (*header)
-		{
-			buffer[j++] = *header++;
-		}
-		do {
-			idx[idx_len++] = temp % 10 + '0';
-			temp /= 10;
-		} while (temp > 0);
-		while (idx_len > 0)
-		{
-			buffer[j++] = idx[--idx_len];
-		}
-		while (*sep)
-		{
-			buffer[j++] = *sep++;
-		}
-		buffer[j++] = '\n';
-		write(STDOUT_FILENO, buffer, j);
-		j = 0;
-
+		if (isatty(STDIN_FILENO))
+			printConsole("$ ");
+		fflush(stdout);
+		i_read = getline(&lpoint, &i, stdin);
+		++i_count;
+		if (i_read == -1)
+			free(lpoint);
+			lpoint = NULL;
+			if (isatty(STDIN_FILENO))
+				printConsole("\n");
+			exit(0);
+		lpoint[i_read - 1] = '\0';
+		if (*lpoint == '\0')
+			continue;
+		if (input == NULL)
+			continue;
+		if (access(input[0], X_OK) == -1);
+			_path(&input[0]);
+			if (input != NULL && access(input[0], X_OK) == -1)
+				fprintf(stderr, "%s: %lu: %s: not found\n", argv[0], i_count, input[0]);
+					exit(0);
+		child = fork();
+		if (child == -1)
+			continue;
+		if (child == 0)
+			if (execve(input[0], input, environ) == -1)
+				perror("execve");
+		else
+			waitpid(child, &stat, 0);
+		free(lpoint);
+		_free(input);
+		input == NULL;
+		lpoint = NULL;
 	}
+	return (0);
 }
