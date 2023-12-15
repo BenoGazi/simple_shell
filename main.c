@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
 	ssize_t i_read;
 	pid_t child;
 	int stat;
+	(void)argc;
 
 	while (true)
 	{
@@ -23,32 +24,38 @@ int main(int argc, char *argv[])
 		i_read = getline(&lpoint, &i, stdin);
 		++i_count;
 		if (i_read == -1)
+		{
 			free(lpoint);
 			lpoint = NULL;
 			if (isatty(STDIN_FILENO))
 				printConsole("\n");
 			exit(0);
+		}
 		lpoint[i_read - 1] = '\0';
 		if (*lpoint == '\0')
 			continue;
 		if (input == NULL)
 			continue;
-		if (access(input[0], X_OK) == -1);
+		if (access(input[0], X_OK) == -1)
+		{
 			_path(&input[0]);
 			if (input != NULL && access(input[0], X_OK) == -1)
 				fprintf(stderr, "%s: %lu: %s: not found\n", argv[0], i_count, input[0]);
 					exit(0);
+		}
 		child = fork();
 		if (child == -1)
 			continue;
 		if (child == 0)
+		{
 			if (execve(input[0], input, environ) == -1)
 				perror("execve");
+		}
 		else
 			waitpid(child, &stat, 0);
 		free(lpoint);
 		_free(input);
-		input == NULL;
+		input = NULL;
 		lpoint = NULL;
 	}
 	return (0);

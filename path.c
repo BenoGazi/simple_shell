@@ -30,7 +30,7 @@ void _path(char **input)
 			fprintf(stderr, "Failed\n");
 			return;
 		}
-		sprintf(j, "%s / %s", j, *input);
+		sprintf(j, "%s / %s", i, *input);
 		if (access(j, X_OK) == 0)
 		{
 			free(*input);
