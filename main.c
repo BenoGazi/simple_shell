@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 			_free(input);
 			continue;
 		}
+		_path(&input[0]);
 		if (access(input[0], X_OK) == -1)
 		{
 			_path(&input[0]);
