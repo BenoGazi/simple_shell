@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	size_t i = 0, i_count = 0;
 	ssize_t i_read;
 	pid_t child;
-	int stat;
+	int stat, exit_stat;
 	(void)argc;
 
 	while (true)
@@ -33,26 +33,53 @@ int main(int argc, char *argv[])
 		}
 		lpoint[i_read - 1] = '\0';
 		if (*lpoint == '\0')
+		{
+			free(lpoint);
+			lpoint = NULL;
 			continue;
-		if (input == NULL)
+		}
+		input = _tok(lpoint, " ");
+		if (input == NULL || input[0] == NULL)
+		{
+			fprintf(stderr, "Error: Invalid Command\n");
+			free(lpoint);
+			lpoint = NULL;
+			_free(input);
 			continue;
+		}
 		if (access(input[0], X_OK) == -1)
 		{
 			_path(&input[0]);
 			if (input != NULL && access(input[0], X_OK) == -1)
 				fprintf(stderr, "%s: %lu: %s: not found\n", argv[0], i_count, input[0]);
-					exit(0);
+					exit(127);
 		}
 		child = fork();
 		if (child == -1)
-			continue;
+		{
+			perror("fork");
+			free(lpoint);
+			lpoint = NULL;
+			_free(input);
+			exit(EXIT_FAILURE);
+		}
 		if (child == 0)
 		{
 			if (execve(input[0], input, environ) == -1)
+			{
 				perror("execve");
+				exit(126);
+			}
 		}
 		else
+		{
 			waitpid(child, &stat, 0);
+			if (WIFEXITED(stat))
+			{
+				exit_stat = WEXITSTATUS(stat);
+				exit(exit_stat);
+			}
+		}
 		free(lpoint);
 		_free(input);
 		input = NULL;
