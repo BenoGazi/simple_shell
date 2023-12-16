@@ -17,6 +17,10 @@ void _path(char **input)
 	{
 		return;
 	}
+	if (strchr(*input, '/') != NULL)
+	{
+		return;
+	}
 	dir = getenv("PATH");
 	if (dir == NULL)
 		return;
@@ -30,7 +34,7 @@ void _path(char **input)
 			fprintf(stderr, "Failed\n");
 			return;
 		}
-		sprintf(j, "%s / %s", i, *input);
+		sprintf(j, "%s/%s", i, *input);
 		if (access(j, X_OK) == 0)
 		{
 			free(*input);
