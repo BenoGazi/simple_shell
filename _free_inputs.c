@@ -20,6 +20,27 @@ void _free(char **input)
 }
 
 /**
+ * _strcat - custom strcat function
+ *@dest: destination
+ *@n: source
+ */
+
+char *_strcat(char *dest, char *n)
+{
+	char *i = dest;
+	while (*dest)
+	{
+		dest++;
+	}
+	while (*n)
+	{
+		*dest++ = *n++;
+	}
+	*dest = '\0';
+	return (i);
+}
+
+/**
  * _strdup - duplicate string
  * @string: param 1;
  * Return: string;

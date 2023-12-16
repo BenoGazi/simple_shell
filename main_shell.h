@@ -18,4 +18,5 @@ char *strdup(const char *string);
 char *_strtok(char *string, const char *del);
 extern char **environ;
 size_t _strlen(char *string);
+char *_strcat(char *dest, char *n);
 #endif

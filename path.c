@@ -8,8 +8,8 @@
 
 void _path(char **input)
 {
-	char *i, *j, *dir, *string_dup;
-
+	char *i, *j = NULL, *dir, *string_dup;
+	char *mod_input;
 	i = NULL;
 	j = NULL;
 
@@ -25,6 +25,11 @@ void _path(char **input)
 	if (dir == NULL)
 		return;
 	string_dup = strdup(dir);
+	if (string_dup == NULL)
+	{
+		fprintf(stderr, "FAILED TO DUPLICATE\n");
+		return;
+	}
 	i = strtok(string_dup, ":");
 	while (i != NULL)
 	{
@@ -32,14 +37,22 @@ void _path(char **input)
 		if (j == NULL)
 		{
 			fprintf(stderr, "Failed\n");
+			free(string_dup);
 			return;
 		}
 		sprintf(j, "%s/%s", i, *input);
 		if (access(j, X_OK) == 0)
 		{
+			mod_input = strdup(j);
+			if (mod_input == NULL)
+			{
+				fprintf(stderr, "failed to duplicate mem");
+				free(j);
+				free(string_dup);
+				exit(EXIT_FAILURE);
+			}
 			free(*input);
-			*input = strdup(j);
-			free(j);
+			*input = mod_input;
 			break;
 		}
 		free(j);
