@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 				free(lpoint);
 				lpoint = NULL;
 				_free(input);
-				_exit(126);
+				_exit(EXIT_FAILURE);
 			}
 		}
 		else
@@ -83,13 +83,14 @@ int main(int argc, char *argv[])
 			if (WIFEXITED(stat))
 			{
 				exit_stat = WEXITSTATUS(stat);
-				_exit(exit_stat);
+				if (exit_stat != 0)
+				{
+					fprintf(stderr, "Command failt:%d/n", exit_stat);
+				}
 			}
 		}
 		free(lpoint);
 		free(input);
-		lpoint = NULL;
-		_free(input);
-	} while(1);
+	} while(true);
 	return (0);
 }
